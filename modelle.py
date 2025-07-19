@@ -48,7 +48,7 @@ def main():
             for run in range(runs):
                 print(f"Run {run+1} of {runs}")
 
-                datamodule = MVTecAD(                       #MVTec ad as dataset 
+                datamodule = MVTecAD(                       #MVTecAD as dataset 
                     root=".\datasets\MVTecAD",
                     category=category,
                     train_batch_size=1,
