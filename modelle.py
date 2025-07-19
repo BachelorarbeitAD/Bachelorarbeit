@@ -128,7 +128,7 @@ def main():
                     std_result = round(row[f"{metric}_std"], 3)
                     result_df.loc[(method), (category, metric)] = f"{mean_result} ± {std_result}"
 
-            result_df.to_excel("")                                                                          #your path to excel
+            result_df.to_excel(excel_path)                                                                        
             print("Data load to your excel file!")                                                          #loads the mean and std of all models, categories, metrics to your excel file
 
 if __name__ == "__main__":
