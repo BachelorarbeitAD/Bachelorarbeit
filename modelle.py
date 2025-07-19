@@ -33,7 +33,7 @@ def main():
         result_df = pd.DataFrame(index = row_index, columns = column_index)    
 
 
-    for model_name, model_class in model_classes.items():       #loop for every model, category, run
+    for model_name in model_classes.items():       #loop for every model, category, run
         print(f"Current model: {model_name}")
         for category in categories:                             #checks if some values are already calculated
             allready_done = all(
