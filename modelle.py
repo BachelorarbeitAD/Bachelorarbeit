@@ -19,13 +19,13 @@ def main():
         "WinCLIP" : WinClip,
     }
 
-    categories = ["bottle", "cable","capsule","carpet","grid","hazelnut","metal_nut","pill","screw","toothbrush","tile","transistor","wood","zipper","leather"]
+    categories = ["bottle", "cable","capsule","carpet","grid","hazelnut","leather","metal_nut","pill","screw","toothbrush","tile","transistor","wood","zipper"]
     metrics = ["image_AUROC","image_F1Score","pixel_AUROC","pixel_F1Score"]
 
    
     column_index = pd.MultiIndex.from_product([categories, metrics])
     row_index = pd.Index(model_classes.keys(), name = "method")
-    excel_path = ""                                                     #your path to excel file 
+    excel_path = ""                                                     #your path to excel file, it has not to exist yet (choose where to save file later)
     
     if os.path.exists(excel_path):                                      #checks if excel already exists
         result_df = pd.read_excel(excel_path, header=[0,1], index_col=0)    
@@ -33,7 +33,7 @@ def main():
         result_df = pd.DataFrame(index = row_index, columns = column_index)    
 
 
-    for model_name in model_classes.items():       #loop for every model, category, run
+    for model_name, model_class in model_classes.items():       #loop for every model, category, run
         print(f"Current model: {model_name}")
         for category in categories:                             #checks if some values are already calculated
             allready_done = all(
@@ -48,7 +48,7 @@ def main():
             for run in range(runs):
                 print(f"Run {run+1} of {runs}")
 
-                datamodule = MVTecAD(                       #MVTecAD as dataset 
+                datamodule = MVTecAD(                       #MVTec ad as dataset 
                     root=".\datasets\MVTecAD",
                     category=category,
                     train_batch_size=1,
@@ -81,7 +81,7 @@ def main():
                 elif model_name == "WinCLIP":
 
                     model = WinClip(
-                      k_shots = 50,
+                      k_shot = 50,
                     )
                 
 
@@ -114,7 +114,7 @@ def main():
                 del model                       #clean for more vram 
                 del engine
                 torch.cuda.empty_cache()
-                gc.collect
+                gc.collect()
 
             all_results_df = pd.DataFrame(all_results)                                          #calculates mean and std of all 10 runs 
             avg_df = all_results_df.groupby(["method"])[metrics].mean().reset_index()
@@ -128,7 +128,7 @@ def main():
                     std_result = round(row[f"{metric}_std"], 3)
                     result_df.loc[(method), (category, metric)] = f"{mean_result} ± {std_result}"
 
-            result_df.to_excel(excel_path)                                                                        
+            result_df.to_excel(excel_path, index=True)                                                                          
             print("Data load to your excel file!")                                                          #loads the mean and std of all models, categories, metrics to your excel file
 
 if __name__ == "__main__":
